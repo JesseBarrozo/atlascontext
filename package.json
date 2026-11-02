@@ -1,0 +1,25 @@
+{
+  "name": "@jessebarrozo/atlas-mcp",
+  "version": "0.1.0",
+  "description": "Deterministic, local project cartography exposed through MCP.",
+  "type": "module",
+  "bin": {
+    "atlas-mcp": "./src/server.mjs"
+  },
+  "exports": {
+    ".": "./src/atlas-core.mjs",
+    "./server": "./src/server.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/atlas-core.mjs && node --check src/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^3.25.76"
+  },
+  "license": "MIT"
+}
