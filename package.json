@@ -1,6 +1,6 @@
 {
   "name": "@jessebarrozo/atlas-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic, local project cartography exposed through MCP.",
   "type": "module",
   "bin": {
@@ -12,7 +12,9 @@
   },
   "scripts": {
     "test": "node --test",
-    "check": "node --check src/atlas-core.mjs && node --check src/server.mjs"
+    "check": "node --check src/atlas-core.mjs && node --check src/server.mjs",
+    "generate": "node src/atlas-cli.mjs generate .",
+    "atlas:check": "node src/atlas-cli.mjs check ."
   },
   "engines": {
     "node": ">=20"

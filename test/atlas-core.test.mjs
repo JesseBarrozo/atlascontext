@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { inspectContext, inspectProject, readProjectFile, validateCitation } from "../src/atlas-core.mjs";
+import { checkAtlas, inspectContext, inspectProject, readProjectFile, validateCitation, writeAtlas } from "../src/atlas-core.mjs";
 
 test("inspects manifests, scripts and stack deterministically", () => {
   const root = mkdtempSync(join(tmpdir(), "atlas-"));
@@ -35,4 +35,14 @@ test("preserves the compatible context directory layout", () => {
   assert.equal(context.present, true);
   assert.deepEqual(context.folders, ["docs", "agents", "skills", "plans", "config", "runtime"]);
   assert.equal(context.groups.docs[0], ".context/docs/README.md");
+});
+
+test("generates and verifies an atlas, then detects stale sources", () => {
+  const root = mkdtempSync(join(tmpdir(), "atlas-"));
+  writeFileSync(join(root, "package.json"), JSON.stringify({ scripts: { test: "node --test" } }));
+  writeFileSync(join(root, "README.md"), "# Project\n");
+  writeAtlas(root);
+  assert.deepEqual(checkAtlas(root), []);
+  writeFileSync(join(root, "README.md"), "# Changed\n");
+  assert.ok(checkAtlas(root).some((error) => error.includes("stale")));
 });

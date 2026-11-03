@@ -32,6 +32,8 @@ The server exposes:
 - `atlas_validate_citation`: verify a `path:line` citation.
 - `atlas_context_status`: inspect the compatible `.context` layout;
 - `atlas_context_list`: list context files grouped by folder.
+- `atlas_generate`: create or update generated pages under `atlas/`;
+- `atlas_check`: detect stale pages, missing pages and invalid citations.
 
 Atlas preserves the same project context folders used by the base implementation:
 
@@ -47,6 +49,24 @@ Atlas preserves the same project context folders used by the base implementation
 ```
 
 The folders and file layout remain compatible. Only the public MCP/tool names are Atlas names. Atlas reads this context and does not rewrite or migrate it automatically.
+
+## Generation and maintenance
+
+An agent can update the map after source changes through MCP:
+
+```text
+atlas_generate({ projectRoot: "/workspace/project" })
+atlas_check({ projectRoot: "/workspace/project" })
+```
+
+The equivalent local commands are:
+
+```sh
+node src/atlas-cli.mjs generate /workspace/project
+node src/atlas-cli.mjs check /workspace/project
+```
+
+Generated pages are written to `atlas/`. Existing manual files are preserved; generated files that are no longer applicable are removed on the next generation.
 
 Every tool requires an explicit `projectRoot`. Atlas never uses a hidden default project.
 

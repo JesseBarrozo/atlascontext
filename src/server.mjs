@@ -2,10 +2,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { inspectContext, inspectProject, readProjectFile, validateCitation } from "./atlas-core.mjs";
+import { checkAtlas, inspectContext, inspectProject, readProjectFile, validateCitation, writeAtlas } from "./atlas-core.mjs";
 
 const rootSchema = z.object({ projectRoot: z.string().min(1).describe("Absolute or relative project directory") });
-const server = new McpServer({ name: "atlas", version: "0.1.0" });
+const server = new McpServer({ name: "atlas", version: "0.2.0" });
 const result = (value) => ({ content: [{ type: "text", text: JSON.stringify(value, null, 2) }] });
 const failure = (error) => ({ content: [{ type: "text", text: error.message }], isError: true });
 
@@ -20,6 +20,12 @@ server.registerTool("atlas_context_status", { description: "Inspect the compatib
 });
 server.registerTool("atlas_context_list", { description: "List documentation, agents, skills, plans and configuration files under .context.", inputSchema: rootSchema }, async ({ projectRoot }) => {
   try { return result(inspectContext(projectRoot)); } catch (error) { return failure(error); }
+});
+server.registerTool("atlas_generate", { description: "Generate or update the atlas directory from the current project sources.", inputSchema: rootSchema }, async ({ projectRoot }) => {
+  try { return result(writeAtlas(projectRoot)); } catch (error) { return failure(error); }
+});
+server.registerTool("atlas_check", { description: "Check whether generated atlas pages and citations are current.", inputSchema: rootSchema }, async ({ projectRoot }) => {
+  try { const errors = checkAtlas(projectRoot); return result({ valid: errors.length === 0, errors }); } catch (error) { return failure(error); }
 });
 server.registerTool("atlas_read_file", { description: "Read one bounded text file inside the project root.", inputSchema: rootSchema.extend({ filePath: z.string().min(1) }) }, async ({ projectRoot, filePath }) => {
   try { return result(readProjectFile(projectRoot, filePath)); } catch (error) { return failure(error); }
