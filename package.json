@@ -1,5 +1,5 @@
 {
-  "name": "@atlas/mcp",
+  "name": "@atlascontext/mcp",
   "version": "0.2.0",
   "description": "Deterministic, local project cartography exposed through MCP.",
   "type": "module",

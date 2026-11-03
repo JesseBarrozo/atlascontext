@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-const entry = { command: "npx", args: ["-y", "@atlas/mcp@latest", "serve"] };
+const entry = { command: "npx", args: ["-y", "@atlascontext/mcp@latest", "serve"] };
 
 function parseArgs(args) {
   const result = { client: "generic", local: false, dryRun: false };
