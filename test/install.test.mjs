@@ -18,3 +18,10 @@ test("supports dry-run without writing", () => {
   install(["--local", "--dry-run"], root);
   assert.throws(() => readFileSync(join(root, ".mcp.json")), /ENOENT/);
 });
+
+test("supports all-harness discovery in dry-run mode", () => {
+  const root = mkdtempSync(join(tmpdir(), "atlas-install-"));
+  const result = install(["--all", "--dry-run"], root);
+  assert.ok(Array.isArray(result.installed));
+  assert.ok(result.installed.length > 0);
+});

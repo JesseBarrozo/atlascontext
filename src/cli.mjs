@@ -24,6 +24,6 @@ if (command === "install") {
     else process.stdout.write("Atlas is current and citations resolve.\n");
   }
 } else {
-  process.stderr.write("Usage: atlas-mcp <install|serve|generate|check>\n");
+  process.stderr.write("Usage: atlas-mcp <install|serve|generate|check> [--all]\n");
   process.exitCode = 1;
 }

@@ -1,10 +1,10 @@
 {
   "name": "@atlascontext/mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Deterministic, local project cartography exposed through MCP.",
   "type": "module",
   "bin": {
-    "atlas-mcp": "./src/cli.mjs"
+    "atlas-mcp": "src/cli.mjs"
   },
   "exports": {
     ".": "./src/atlas-core.mjs",

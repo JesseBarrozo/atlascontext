@@ -17,6 +17,14 @@ npx @atlascontext/mcp install --client claude --local
 npx @atlascontext/mcp install --client cursor --local
 ```
 
+Install into every detected harness configuration:
+
+```sh
+npx @atlascontext/mcp install --all
+```
+
+Use `--all --local` to write project-local configurations for every supported client.
+
 Preview changes without writing:
 
 ```sh
