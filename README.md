@@ -4,6 +4,25 @@ Atlas is a deterministic, local project cartography server exposed through the M
 
 ## MCP setup
 
+Install Atlas into a generic local MCP configuration:
+
+```sh
+npx @atlas/mcp install --local
+```
+
+Install for a specific supported client:
+
+```sh
+npx @atlas/mcp install --client claude --local
+npx @atlas/mcp install --client cursor --local
+```
+
+Preview changes without writing:
+
+```sh
+npx @atlas/mcp install --client claude --dry-run
+```
+
 Build the package locally:
 
 ```sh
@@ -17,8 +36,8 @@ Configure any MCP-compatible harness with:
 {
   "mcpServers": {
     "atlas": {
-      "command": "node",
-      "args": ["/absolute/path/to/atlas/src/server.mjs"]
+      "command": "npx",
+      "args": ["-y", "@atlas/mcp@latest", "serve"]
     }
   }
 }
