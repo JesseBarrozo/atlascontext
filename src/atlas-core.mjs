@@ -15,7 +15,7 @@ function walk(root, maxFiles) {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       if (files.length >= maxFiles || entry.isSymbolicLink()) return;
       if (entry.isDirectory()) {
-        if (!SKIP.has(entry.name) && !entry.name.startsWith(".")) visit(join(dir, entry.name));
+        if (!SKIP.has(entry.name) && (!entry.name.startsWith(".") || entry.name === ".context")) visit(join(dir, entry.name));
       } else if (entry.isFile()) files.push(relative(root, join(dir, entry.name)).split("\\").join("/"));
     }
   }
@@ -81,7 +81,21 @@ export function inspectProject(projectRoot, options = {}) {
       if (!/localhost|127\.0\.0\.1|example\.(com|org|net)/i.test(match[1])) externalHosts.push({ host: match[1].toLowerCase(), file, line: line(content, match[0]) });
     }
   }
-  return { schemaVersion: 1, root, digest: digest(snapshotData), sourceFiles: snapshotData.files.filter((file) => SOURCE.has(extname(file))).length, files: snapshotData.files, stack, manifests, scripts, entryPoints, documents, externalHosts };
+  const contextFiles = snapshotData.files.filter((file) => file.startsWith(".context/"));
+  const contextFolders = ["docs", "agents", "skills", "plans", "config", "runtime", "cache"].filter((folder) => contextFiles.some((file) => file.startsWith(`.context/${folder}/`)));
+  return { schemaVersion: 1, root, digest: digest(snapshotData), sourceFiles: snapshotData.files.filter((file) => SOURCE.has(extname(file)) && !file.startsWith(".context/")).length, files: snapshotData.files, stack, manifests, scripts, entryPoints, documents, externalHosts, context: { present: existsSync(join(root, ".context")), folders: contextFolders, files: contextFiles } };
+}
+
+export function inspectContext(projectRoot, options = {}) {
+  const map = inspectProject(projectRoot, options);
+  const groups = new Map();
+  for (const file of map.context.files) {
+    const folder = file.split("/")[1] ?? "root";
+    const items = groups.get(folder) ?? [];
+    items.push(file);
+    groups.set(folder, items);
+  }
+  return { present: map.context.present, folders: map.context.folders, groups: Object.fromEntries([...groups].map(([name, files]) => [name, files.sort()])) };
 }
 
 export function readProjectFile(projectRoot, filePath, options = {}) {

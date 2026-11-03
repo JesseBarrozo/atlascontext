@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { inspectProject, readProjectFile, validateCitation } from "../src/atlas-core.mjs";
+import { inspectContext, inspectProject, readProjectFile, validateCitation } from "../src/atlas-core.mjs";
 
 test("inspects manifests, scripts and stack deterministically", () => {
   const root = mkdtempSync(join(tmpdir(), "atlas-"));
@@ -21,4 +21,18 @@ test("rejects traversal and validates citations", () => {
   assert.throws(() => readProjectFile(root, "../outside"), /inside the project root/);
   assert.equal(validateCitation(root, "README.md:2").valid, true);
   assert.equal(validateCitation(root, "README.md:8").valid, false);
+});
+
+test("preserves the compatible context directory layout", () => {
+  const root = mkdtempSync(join(tmpdir(), "atlas-"));
+  writeFileSync(join(root, "README.md"), "# Project\n");
+  for (const folder of ["docs", "agents", "skills", "plans", "config", "runtime"]) {
+    const directory = join(root, ".context", folder);
+    mkdirSync(directory, { recursive: true });
+    writeFileSync(join(directory, "README.md"), `# ${folder}\n`);
+  }
+  const context = inspectContext(root);
+  assert.equal(context.present, true);
+  assert.deepEqual(context.folders, ["docs", "agents", "skills", "plans", "config", "runtime"]);
+  assert.equal(context.groups.docs[0], ".context/docs/README.md");
 });

@@ -30,6 +30,23 @@ The server exposes:
 - `atlas_map`: return the machine-readable project map;
 - `atlas_read_file`: read one bounded file inside the project root;
 - `atlas_validate_citation`: verify a `path:line` citation.
+- `atlas_context_status`: inspect the compatible `.context` layout;
+- `atlas_context_list`: list context files grouped by folder.
+
+Atlas preserves the same project context folders used by the base implementation:
+
+```text
+.context/
+├── docs/
+├── agents/
+├── skills/
+├── plans/
+├── config/
+├── runtime/
+└── cache/
+```
+
+The folders and file layout remain compatible. Only the public MCP/tool names are Atlas names. Atlas reads this context and does not rewrite or migrate it automatically.
 
 Every tool requires an explicit `projectRoot`. Atlas never uses a hidden default project.
 

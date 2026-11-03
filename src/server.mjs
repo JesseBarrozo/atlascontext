@@ -2,7 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { inspectProject, readProjectFile, validateCitation } from "./atlas-core.mjs";
+import { inspectContext, inspectProject, readProjectFile, validateCitation } from "./atlas-core.mjs";
 
 const rootSchema = z.object({ projectRoot: z.string().min(1).describe("Absolute or relative project directory") });
 const server = new McpServer({ name: "atlas", version: "0.1.0" });
@@ -14,6 +14,12 @@ server.registerTool("atlas_status", { description: "Inspect a project without mo
 });
 server.registerTool("atlas_map", { description: "Return the deterministic machine-readable project map.", inputSchema: rootSchema }, async ({ projectRoot }) => {
   try { return result(inspectProject(projectRoot)); } catch (error) { return failure(error); }
+});
+server.registerTool("atlas_context_status", { description: "Inspect the compatible .context directory layout without modifying it.", inputSchema: rootSchema }, async ({ projectRoot }) => {
+  try { return result(inspectContext(projectRoot)); } catch (error) { return failure(error); }
+});
+server.registerTool("atlas_context_list", { description: "List documentation, agents, skills, plans and configuration files under .context.", inputSchema: rootSchema }, async ({ projectRoot }) => {
+  try { return result(inspectContext(projectRoot)); } catch (error) { return failure(error); }
 });
 server.registerTool("atlas_read_file", { description: "Read one bounded text file inside the project root.", inputSchema: rootSchema.extend({ filePath: z.string().min(1) }) }, async ({ projectRoot, filePath }) => {
   try { return result(readProjectFile(projectRoot, filePath)); } catch (error) { return failure(error); }
